@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -50,7 +51,7 @@ public class JTriangleDetection {
 		
 	    double momentum = 0.8;
 	    double learnRate = 0.5;
-	    int epochs = 1;
+	    int epochs = 1000;
 		int[] inputs = new int[]{60};
 	    int[] secondLayerInputs = new int[60];
 	    for(int k = 0; k < secondLayerInputs.length; k++){
@@ -64,7 +65,6 @@ public class JTriangleDetection {
 	    for (int j = 0; j < epochs; j++) {
 	        for (int i = 0; i < pixelArrays.size(); i++) {
 	            upperLayer.TrainLayer(imageArray[i], expected[i]);
-	            System.out.print(upperLayer.GetNode(0).GetWeights()[0]);
 	            upperLayer.ReassignLayerWeights(imageArray[i]);
 	        }
 	    }
@@ -72,9 +72,60 @@ public class JTriangleDetection {
 	    for(int i = 0; i < pixelArrays.size(); i++){
 	    	System.out.print(System.lineSeparator());
 	    	System.out.print(System.lineSeparator());
-	    	System.out.print("  Outputs:  ");	
+	    	System.out.print("  Output:  ");	
+	    	DecimalFormat df = new DecimalFormat("#.000");
 	    	double[] out = upperLayer.GetOutputs(imageArray[i]);   		    	
-	    	System.out.print(out[0]);
+	    	System.out.print(df.format(out[0]));
+	    	System.out.print(System.lineSeparator());
+	    	System.out.print("  Expected:  ");	
+	    	System.out.print(expected[i]);
+	    }
+    	System.out.print(System.lineSeparator());
+    	
+    	System.out.print("TEST DATA");
+    	System.out.print(System.lineSeparator());
+    	System.out.print(System.lineSeparator());
+    	
+		pixelArrays = new ArrayList<String>();	
+		File columnNumbers2 = new File("src/testSet/testData.csv");
+		try {
+			
+			csvReadStream = new Scanner(columnNumbers2);
+			csvReadStream.useDelimiter("\r?\n");
+	        while(csvReadStream.hasNext()){
+	            String lineData = csvReadStream.next();
+	            pixelArrays.add(lineData);	            
+	        }
+	        csvReadStream.close();
+	        
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		imageArray = new double[pixelArrays.size()][100];
+		expected = new double[pixelArrays.size()];
+		for(int g = 0; g < pixelArrays.size(); g++){
+			
+			String[] tempVals = pixelArrays.get(g).split(",");
+			
+			for(int h = 0; h < 100; h++){
+				double pixel = Double.parseDouble(tempVals[h]);
+				imageArray[g][h] = pixel;
+			}
+			expected[g] = Double.parseDouble(tempVals[101]);
+		}
+	    
+	    
+	    for(int i = 0; i < pixelArrays.size(); i++){
+	    	System.out.print(System.lineSeparator());
+	    	System.out.print(System.lineSeparator());
+	    	System.out.print("  Output:  ");	
+	    	DecimalFormat df = new DecimalFormat("#.000");
+	    	double[] out = upperLayer.GetOutputs(imageArray[i]);   		    	
+	    	System.out.print(df.format(out[0]));
+	    	System.out.print(System.lineSeparator());
+	    	System.out.print("  Expected:  ");	
+	    	System.out.print(expected[i]);
 	    }
 	}
 	

@@ -56,7 +56,13 @@ public class JImgRecogNode {
 	public void SetRandomWeights(){
 		Random random = new Random();
 		for(int i = 0; i < (inputs + 1); i++){
-			weights[i] = random.nextDouble() ;
+			double plusorminus = random.nextDouble();
+			if(plusorminus > 0.5){
+				weights[i] = random.nextDouble() ;
+			}
+			else{
+				weights[i] = -(random.nextDouble()) ;
+			}
 		}
 	}
 	
